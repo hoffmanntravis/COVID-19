@@ -13,6 +13,8 @@ namespace COVID_19
     public static class CovidData
     {
         public static Dictionary<LocationKey, Occurences> LocationOccurrences { get; set; } = new Dictionary<LocationKey, Occurences>();
+        public static HashSet<string> CountryRegions { get; set; } = new HashSet<string>();
+        public static HashSet<string> ProvinceStates { get; set; } = new HashSet<string>();
         public static List<KeyValuePair<LocationKey, Occurences>> SerializedLocationOccurrences
         {
             get { return LocationOccurrences.ToList(); }
@@ -26,6 +28,8 @@ namespace COVID_19
             {
                 foreach (LocationCsv lcsv in LocationData)
                 {
+                    CountryRegions.Add(lcsv.CountryRegion);
+                    ProvinceStates.Add(lcsv.ProvinceState);
                     Occurences occurences = new Occurences();
                     StatusCount statusCount = new StatusCount
                     {

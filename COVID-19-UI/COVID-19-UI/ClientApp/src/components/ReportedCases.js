@@ -8,7 +8,7 @@ var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 export class ReportedCases extends Component {
 	render() {
-		/*const options = {
+		const options = {
 			theme: "light2",
 			title: {
 				text: "COVID-19 Reported Cases"
@@ -67,10 +67,13 @@ export class ReportedCases extends Component {
 					]
 				}
 			]
-		}*/
+		}
 		return (
 			<div>
-				< DeserializeStatus.CovidStatus />
+				<CanvasJSChart options={options}
+				/* onRef={ref => this.chart = ref} */
+				/>
+				{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
 			</div>
 		);
 	}

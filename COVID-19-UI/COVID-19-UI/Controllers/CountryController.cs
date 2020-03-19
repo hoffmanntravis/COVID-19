@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using static COVID_19.CovidData;
 
 namespace COVID_19.Controllers
 {
@@ -16,11 +15,11 @@ namespace COVID_19.Controllers
 
         //Country = country; Province = province;
         //https://localhost:44353/api/country?Country=Mainland%20China&Province=Anhui
-        public string Get([FromQuery] LocationKey locationKey)
+        public string Get([FromQuery] CovidData.LocationKey locationKey)
         {
             try
             {
-                return JsonConvert.SerializeObject(CovidData.LocationOccurrences[locationKey], Formatting.Indented);
+                return JsonConvert.SerializeObject(CovidData.LocationOccurrences[locationKey].DateOccurrences.ToList(), Formatting.Indented);
             }
             catch
             {
