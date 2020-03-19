@@ -52,6 +52,7 @@ namespace COVID_19
 
         public class LocationKey
         {
+            public LocationKey() { }
             public LocationKey(string country, string province)
             {
                 Country = country;
