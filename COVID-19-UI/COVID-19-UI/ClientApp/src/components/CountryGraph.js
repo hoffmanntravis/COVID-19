@@ -4,13 +4,11 @@ var React = require('react');
 var Component = React.Component;
 //var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-export class FetchData extends Component {
-    static displayName = FetchData.name;
+export class CountryGraph extends Component {    
 
-
-    constructor(props) {
+    constructor(url, props) {
         super(props);
-        this.state = { CovidData: [], loading: true };
+        this.state = { CovidData: [], loading: true, launchUrl: url};
     }
 
     componentDidMount() {
@@ -56,7 +54,7 @@ export class FetchData extends Component {
                 {
                     label: `Confirmed: ${TotalConfirmed}`,
                     fill: true,
-                    lineTension: 0.5,
+                    lineTension: 0.2,
                     backgroundColor: 'rgba(102,178,255,.5)',
                     borderColor: 'rgba(0,0,0,1)',
                     borderWidth: 2,
@@ -65,7 +63,7 @@ export class FetchData extends Component {
                 {
                     label: `Deaths: ${TotalDeaths}`,
                     fill: true,
-                    lineTension: 0.5,
+                    lineTension: 0.2,
                     backgroundColor: 'rgba(180,0,0,.5)',
                     borderColor: 'rgba(0,0,0,1)',
                     borderWidth: 2,
@@ -74,7 +72,7 @@ export class FetchData extends Component {
                 {
                     label: `Recovered: ${TotalRecovered}`,
                     fill: true,
-                    lineTension: 0.5,
+                    lineTension: 0.2,
                     backgroundColor: 'rgba(0,128,0,.5)',
                     borderColor: 'rgba(0,0,0,1)',
                     borderWidth: 2,
@@ -114,7 +112,7 @@ export class FetchData extends Component {
 
     async GetCovidData() {
         //https://localhost:44353/api/country?Country=Mainland%20China&Province=Anhui
-        const response = await fetch('api/country?Country=Mainland%20China&Province=Anhui');
+        const response = await fetch(this.state.launchUrl);
         const data = await response.json();
         this.setState({ CovidData: data, loading: false });
     }

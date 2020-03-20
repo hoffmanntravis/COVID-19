@@ -28,8 +28,8 @@ namespace COVID_19
             {
                 foreach (LocationCsv lcsv in LocationData)
                 {
-                    CountryRegions.Add(lcsv.CountryRegion);
-                    ProvinceStates.Add(lcsv.ProvinceState);
+                    CountryRegions.Add(lcsv.CountryRegion.ToLower());
+                    ProvinceStates.Add(lcsv.ProvinceState.ToLower());
                     Occurences occurences = new Occurences();
                     StatusCount statusCount = new StatusCount
                     {
@@ -39,7 +39,7 @@ namespace COVID_19
                     };
                     occurences.DateOccurrences.Add(lcsv.LastUpdate.Date, statusCount);
 
-                    LocationKey location = new LocationKey(lcsv.CountryRegion, lcsv.ProvinceState);
+                    LocationKey location = new LocationKey(lcsv.CountryRegion.ToLower(), lcsv.ProvinceState.ToLower());
 
                     if (!LocationOccurrences.ContainsKey(location))
                     {
@@ -78,8 +78,25 @@ namespace COVID_19
             {
                 return (Country + Province).GetHashCode();
             }
-            public string Country { get; set; }
-            public string Province { get; set; }
+            private string _country;
+
+            public string Country 
+            {
+                get => _country;
+                set
+                {
+                    _country = value.ToLower();
+                }
+            }
+            private string _province;
+            public string Province
+            {
+                get => _province;
+                set
+                {
+                    _province = value.ToLower();
+                }
+            }
         }
 
 
