@@ -16,7 +16,7 @@ namespace COVID_19.Controllers
             }
             catch
             {
-                return String.Format("Unable to list countries/regions");
+                return JsonConvert.SerializeObject("Unable to list countries/regions");
             };
         }
     }

@@ -16,7 +16,14 @@ namespace COVID_19.Controllers
         [HttpGet]
         public string Get()
         {
-            return JsonConvert.SerializeObject(CovidData.SerializedLocationOccurrences, Formatting.Indented) ;
+            try
+            {
+                return JsonConvert.SerializeObject(CovidData.SerializedLocationOccurrences, Formatting.Indented);
+            }
+            catch
+            {
+                return JsonConvert.SerializeObject("Unable to retrieve occurrences and serialize into JSON.");
+            }
         }
     }
 }

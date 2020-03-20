@@ -80,12 +80,15 @@ namespace COVID_19
             }
             private string _country;
 
-            public string Country 
+            public string Country
             {
                 get => _country;
                 set
                 {
-                    _country = value.ToLower();
+                    if (value == null)
+                        _country = value;
+                    else
+                        _country = value.ToLower();
                 }
             }
             private string _province;
@@ -94,7 +97,10 @@ namespace COVID_19
                 get => _province;
                 set
                 {
-                    _province = value.ToLower();
+                    if (value == null)
+                        _province = value;
+                    else
+                        _province = value.ToLower();
                 }
             }
         }

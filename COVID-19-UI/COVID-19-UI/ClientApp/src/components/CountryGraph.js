@@ -5,27 +5,26 @@ var Component = React.Component;
 //var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 export class CountryGraph extends Component {    
-
-    constructor(url, props) {
+    constructor(props) {
         super(props);
-        this.state = { CovidData: [], loading: true, launchUrl: url};
-    }
-
+        this.state = { CovidData: [], dataUrl: "" }
+    };
     componentDidMount() {
         this.GetCovidData();
     }
 
+    updateData(url) {
+        //this.setState({ dataUrl: url });
+        console.log("about to log url:");
+        console.log(this.state.dataUrl);
+        this.GetCovidData();
+    }
 
     render() {
-        let contents = this.state.loading
-            ? <p><em>Loading...</em></p>
-            : null;
-
-        var CountryData = this.state.CovidData;
+        var CountryData = this.CovidData;
         var ConfirmedDataPoints = [];
         var DeathsDataPoints = [];
         var RecoveredDataPoints = [];
-        var Dates = [];
 
         for (var i = 0; i < CountryData.length; i++) {
             var confirmed = { x: null, y: null };
@@ -108,13 +107,11 @@ export class CountryGraph extends Component {
         );
 
     }
-
-
     async GetCovidData() {
         //https://localhost:44353/api/country?Country=Mainland%20China&Province=Anhui
-        const response = await fetch(this.state.launchUrl);
+        const response = await fetch(encodeURI(this.state.dataUrl));
         const data = await response.json();
-        this.setState({ CovidData: data, loading: false });
+        this.setState({ CovidData: data });
     }
 
 }
