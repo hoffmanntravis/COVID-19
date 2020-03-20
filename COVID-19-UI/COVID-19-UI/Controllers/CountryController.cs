@@ -23,7 +23,7 @@ namespace COVID_19.Controllers
             }
             catch
             {
-                return JsonConvert.SerializeObject(String.Format("{0}:{1} - key not found",locationKey.Country, locationKey.Province));
+                return JsonConvert.SerializeObject(null);
             };
         }
     }

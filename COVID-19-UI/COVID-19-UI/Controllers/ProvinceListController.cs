@@ -16,7 +16,7 @@ namespace COVID_19.Controllers
             }
             catch
             {
-                return JsonConvert.SerializeObject("Unable to list provinces/states");
+                return JsonConvert.SerializeObject(null);
             };
         }
     }

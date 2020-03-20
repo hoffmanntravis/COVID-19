@@ -22,7 +22,7 @@ namespace COVID_19.Controllers
             }
             catch
             {
-                return JsonConvert.SerializeObject("Unable to retrieve occurrences and serialize into JSON.");
+                return JsonConvert.SerializeObject(null);
             }
         }
     }
