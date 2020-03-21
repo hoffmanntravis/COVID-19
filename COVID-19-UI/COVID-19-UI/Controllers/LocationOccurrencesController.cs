@@ -10,7 +10,7 @@ namespace COVID_19.Controllers
 {
     [ApiController]
     [Route("api/{controller}")]
-    public class CountryController : ControllerBase
+    public class LocationOccurrencesController : ControllerBase
     {
 
         //Country = country; Province = province;

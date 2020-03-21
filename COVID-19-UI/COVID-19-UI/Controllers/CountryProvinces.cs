@@ -9,23 +9,22 @@ using Newtonsoft.Json;
 namespace COVID_19.Controllers
 {
     [ApiController]
-    [Route("StatusJSON")]
-    public class LocationOccurrencesController : ControllerBase
+    [Route("api/{controller}")]
+    public class CountryProvincesController : ControllerBase
     {
 
-        [HttpGet]
-        public string Get()
+        //Country = country; Province = province;
+        //https://localhost:44353/api/country?Country=Mainland%20China&Province=Anhui
+        public string Get([FromQuery] string Country)
         {
             try
             {
-                var occurrences = CovidData.SerializedLocationOccurrences.ToList();
-                occurrences.Sort();
-                return JsonConvert.SerializeObject(occurrences, Formatting.Indented);
+                return JsonConvert.SerializeObject(CovidData.CountryProvinces[Country].Provinces.ToList(), Formatting.Indented);
             }
             catch
             {
                 return JsonConvert.SerializeObject(null);
-            }
+            };
         }
     }
 }

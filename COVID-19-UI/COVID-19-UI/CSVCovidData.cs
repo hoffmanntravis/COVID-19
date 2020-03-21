@@ -18,11 +18,15 @@ namespace COVID_19
         public static Dictionary<LocationKey, Occurences> LocationOccurrences { get; set; } = new Dictionary<LocationKey, Occurences>();
         public static HashSet<string> CountryRegions { get; set; } = new HashSet<string>();
         public static HashSet<string> ProvinceStates { get; set; } = new HashSet<string>();
+        public static Dictionary<string, Country> CountryProvinces { get; set; } = new Dictionary<string, Country>();
         public static List<KeyValuePair<LocationKey, Occurences>> SerializedLocationOccurrences
         {
             get { return LocationOccurrences.ToList(); }
             set { LocationOccurrences = value.ToDictionary(x => x.Key, x => x.Value); }
         }
+
+
+
 
         public static void convertCsvToDictionary(List<dynamic> LocationList, string type)
         {
@@ -31,14 +35,29 @@ namespace COVID_19
                 var dict = (IDictionary<string, object>)lcsv;
                 string Country = lcsv.countryregion.ToLower();
                 string Province = lcsv.provincestate.ToLower();
+
+
                 if (!String.IsNullOrEmpty(Country))
                     CountryRegions.Add(Country.ToLower());
                 if (!String.IsNullOrEmpty(Province))
+                {
                     ProvinceStates.Add(Province.ToLower());
+                    LocationKey lk = new LocationKey(Country, Province);
+                    if (!CountryProvinces.ContainsKey(Country))
+                        CountryProvinces.Add(Country, new Country());
+                    //CountryProvinces.Add(lk, new Location(Country, Province, new Coordinates(lcsv.Lat, lcsv.Long)));
+                    else
+                    {
+                        if (!CountryProvinces[Country].Provinces.Contains(Province))
+                            CountryProvinces[Country].Provinces.Add(Province);
+                    }
+                }
+
+
 
                 DateTime firstDate = DateTime.Parse("1/1/2020");
                 DateTime endDate = DateTime.Now;
-                int daysToAttempt = (endDate - firstDate).Days;
+                int daysToAttempt = (endDate - firstDate).Days + 10;
 
 
                 for (int i = 0; i < daysToAttempt; i++)
@@ -88,6 +107,10 @@ namespace COVID_19
             convertCsvToDictionary(CSVCovidData.RawDataRecovered, "Recovered");
         }
 
+        public class Country
+        {
+            public HashSet<string> Provinces { get; set; } = new HashSet<string>();
+        }
 
         public class LocationKey
         {

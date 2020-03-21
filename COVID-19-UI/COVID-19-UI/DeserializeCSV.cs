@@ -60,8 +60,8 @@ namespace COVID_19
 
         public static void DeserializeCsvs(string url)
         {
-            //DownloadGitZip(url, CsvPaths.ZipPath);
-            //ExtractGitZip(CsvPaths.ZipPath, CsvPaths.ExtractPath);
+            DownloadGitZip(url, CsvPaths.ZipPath);
+            ExtractGitZip(CsvPaths.ZipPath, CsvPaths.ExtractPath);
             string[] csvFiles = Directory.GetFiles(CsvPaths.DailyReportsPath, "*.csv*", SearchOption.AllDirectories);
             foreach (string csvFile in csvFiles)
             {
