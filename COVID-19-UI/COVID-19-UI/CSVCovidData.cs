@@ -8,6 +8,9 @@ namespace COVID_19
     public static class CSVCovidData
     {
         public static List<List<LocationCsv>> LocationCsvList = new List<List<LocationCsv>>();
+        public static List<dynamic> RawDataConfirmed = new List<dynamic>();
+        public static List<dynamic> RawDataDeaths = new List<dynamic>();
+        public static List<dynamic> RawDataRecovered = new List<dynamic>();
     }
 
     public static class CovidData
@@ -21,36 +24,68 @@ namespace COVID_19
             set { LocationOccurrences = value.ToDictionary(x => x.Key, x => x.Value); }
         }
 
-
-        public static void ConvertFromCsvLocationToDictionary()
+        public static void convertCsvToDictionary(List<dynamic> LocationList, string type)
         {
-            foreach (List<LocationCsv> LocationData in CSVCovidData.LocationCsvList)
+            foreach (var lcsv in LocationList)
             {
-                foreach (LocationCsv lcsv in LocationData)
+                var dict = (IDictionary<string, object>)lcsv;
+                string Country = lcsv.countryregion.ToLower();
+                string Province = lcsv.provincestate.ToLower();
+                if (!String.IsNullOrEmpty(Country))
+                    CountryRegions.Add(Country.ToLower());
+                if (!String.IsNullOrEmpty(Province))
+                    ProvinceStates.Add(Province.ToLower());
+
+                DateTime firstDate = DateTime.Parse("1/1/2020");
+                DateTime endDate = DateTime.Now;
+                int daysToAttempt = (endDate - firstDate).Days;
+
+
+                for (int i = 0; i < daysToAttempt; i++)
                 {
-                    CountryRegions.Add(lcsv.CountryRegion.ToLower());
-                    ProvinceStates.Add(lcsv.ProvinceState.ToLower());
-                    Occurences occurences = new Occurences();
-                    StatusCount statusCount = new StatusCount
-                    {
-                        Confirmed = lcsv.Confirmed.GetValueOrDefault(),
-                        Deaths = lcsv.Deaths.GetValueOrDefault(),
-                        Recovered = lcsv.Recovered.GetValueOrDefault()
-                    };
-                    occurences.DateOccurrences.Add(lcsv.LastUpdate.Date, statusCount);
+                    StatusCount statusCount = new StatusCount();
+                    DateTime dateToAttempt = firstDate.AddDays(i);
+                    string targetDay = dateToAttempt.ToString("Mdyy");
 
-                    LocationKey location = new LocationKey(lcsv.CountryRegion.ToLower(), lcsv.ProvinceState.ToLower());
+                    if (dict.TryGetValue(targetDay, out var count))
+                    {
+                        int intcount = int.Parse(count.ToString());
+                        if (type == "Confirmed")
+                            statusCount.Confirmed = intcount;
+                        else if (type == "Deaths")
+                            statusCount.Deaths = intcount;
+                        else if (type == "Recovered")
+                            statusCount.Recovered = intcount;
 
-                    if (!LocationOccurrences.ContainsKey(location))
-                    {
-                        LocationOccurrences.Add(location, occurences);
-                    }
-                    else
-                    {
-                        LocationOccurrences[location].DateOccurrences[lcsv.LastUpdate.Date] = statusCount;
+
+                        Occurences occurences = new Occurences();
+                        occurences.DateOccurrences.Add(dateToAttempt, statusCount);
+
+                        LocationKey location = new LocationKey(Country.ToLower(), Province.ToLower());
+
+                        if (!LocationOccurrences.ContainsKey(location))
+                            LocationOccurrences.Add(location, occurences);
+
+
+                        if (!LocationOccurrences[location].DateOccurrences.ContainsKey(dateToAttempt))
+                            LocationOccurrences[location].DateOccurrences[dateToAttempt] = new StatusCount();
+
+                        if (type == "Confirmed")
+                            LocationOccurrences[location].DateOccurrences[dateToAttempt].Confirmed = statusCount.Confirmed;
+                        else if (type == "Deaths")
+                            LocationOccurrences[location].DateOccurrences[dateToAttempt].Deaths = statusCount.Deaths;
+                        else if (type == "Recovered")
+                            LocationOccurrences[location].DateOccurrences[dateToAttempt].Recovered = statusCount.Recovered;
+
                     }
                 }
             }
+        }
+        public static void ConvertFromCsvLocationToDictionary()
+        {
+            convertCsvToDictionary(CSVCovidData.RawDataConfirmed, "Confirmed");
+            convertCsvToDictionary(CSVCovidData.RawDataDeaths, "Deaths");
+            convertCsvToDictionary(CSVCovidData.RawDataRecovered, "Recovered");
         }
 
 
@@ -136,9 +171,9 @@ namespace COVID_19
         public class StatusCount
         {
             //public DateTime Date { get; set; }
-            public int Confirmed;
-            public int Deaths;
-            public int Recovered;
+            public int Confirmed = 0;
+            public int Deaths = 0;
+            public int Recovered = 0;
         }
 
         public class Coordinates

@@ -18,7 +18,9 @@ namespace COVID_19.Controllers
         {
             try
             {
-                return JsonConvert.SerializeObject(CovidData.SerializedLocationOccurrences, Formatting.Indented);
+                var occurrences = CovidData.SerializedLocationOccurrences.ToList();
+                occurrences.Sort();
+                return JsonConvert.SerializeObject(occurrences, Formatting.Indented);
             }
             catch
             {

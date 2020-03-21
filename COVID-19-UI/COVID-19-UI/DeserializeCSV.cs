@@ -15,25 +15,33 @@ namespace COVID_19
         internal readonly static string CurrentPath = Directory.GetCurrentDirectory();
         internal readonly static string ZipPath = @CurrentPath + "/JH.zip";
         internal readonly static string ExtractPath = @CurrentPath;
-        internal readonly static string DailyReportsPath = @CurrentPath + "/COVID-19-master/csse_covid_19_data/csse_covid_19_daily_reports";
+        internal readonly static string DailyReportsPath = @CurrentPath + "/COVID-19-master/csse_covid_19_data/csse_covid_19_time_series";
     }
     public static class DeserializeCSV
     {
 
-        private static void Deserialize(StreamReader sr)
+        private static void Deserialize(StreamReader sr, string filename)
         {
+
             using (CsvReader csv = new CsvReader(sr, CultureInfo.InvariantCulture))
             {
                 //csv.Configuration.TypeConverterCache.RemoveConverter<bool>();
                 //csv.Configuration.TypeConverterCache.AddConverter<bool>(new CustomBooleanTypeConverterCache());
 
                 //csv.Configuration.HeaderValidated = null;
-                //csv.Configuration.MissingFieldFound = null;
+                csv.Configuration.MissingFieldFound = null;
 
                 //remove slashes and spaces from the header names and make them lowercase
                 csv.Configuration.PrepareHeaderForMatch = (header, index) => Regex.Replace(header, "[/' ']", string.Empty).ToLower();
 
-                CSVCovidData.LocationCsvList.Add(csv.GetRecords<LocationCsv>().ToList());
+                //CSVCovidData.LocationCsvList.Add(csv.GetRecords<LocationCsv>().ToList());
+
+                if (filename.Contains("time_series_19-covid-Confirmed"))
+                    CSVCovidData.RawDataConfirmed = csv.GetRecords<dynamic>().ToList();
+                else if (filename.Contains("time_series_19-covid-Deaths"))
+                    CSVCovidData.RawDataDeaths = csv.GetRecords<dynamic>().ToList();
+                else if (filename.Contains("time_series_19-covid-Recovered"))
+                    CSVCovidData.RawDataRecovered = csv.GetRecords<dynamic>().ToList();
             }
         }
 
@@ -57,7 +65,7 @@ namespace COVID_19
             string[] csvFiles = Directory.GetFiles(CsvPaths.DailyReportsPath, "*.csv*", SearchOption.AllDirectories);
             foreach (string csvFile in csvFiles)
             {
-                Deserialize(new StreamReader(csvFile));
+                Deserialize(new StreamReader(csvFile), csvFile);
             }
         }
     }
