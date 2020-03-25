@@ -18,39 +18,48 @@ export class Home extends Component {
     }
 
     refreshGraphCountry(e) {
-        var selectedCountry = e.target.value;
-        this.state.provinceUrl = `api/CountryProvinces?Country=${selectedCountry}`;
-        this.GetCountryProvinceData();
-        this.state.provinceReady = false;
-        this.provinces = null;
 
-        if (this.state.selectedProvince || this.state.provinces.length == 0) {
-            this.state.ready = false;
+        this.setState({
+            provinceUrl: `api/CountryProvinces?Country=${e.target.value}`, provinceReady: false, provinces: [],
+            ready: false,
+            selectedCountry: e.target.value,
+            validationError: e.target.value === "" ? "You must select a Country" : ""
+        });
 
-            this.setState({ selectedCountry: selectedCountry, validationError: e.target.value === "" ? "You must select a Country" : "" })
-            this.state.url = `api/LocationOccurrences?Country=${selectedCountry}&Province=${this.state.selectedProvince}`;
+        if (this.state.provinces.includes(this.state.selectedProvince)) {
+            var occurencesUrl = `api/LocationOccurrences?Country=${e.target.value}&Province=${this.state.selectedProvince}`
         }
+        else {
+            var occurencesUrl = `api/LocationOccurrences?Country=${e.target.value}`
+        }
+
+        this.setState({ url: occurencesUrl });
 
     }
 
     refreshGraphProvinces(e) {
-        
-        this.state.provinceReady = true;
+        this.setState({});
 
-        if (this.state.provinces.length > 0) {
-            this.state.ready = false;
-            var selectedProvince = e.target.value;
-            var selectedCountry = this.state.selectedCountry;
+        var selectedCountry = this.state.selectedCountry;
 
-            this.setState({ selectedProvince: selectedProvince, validationError: e.target.value === "" ? "You must select a Province" : "" })
-            this.state.url = `api/LocationOccurrences?Country=${selectedCountry}&Province=${selectedProvince}`;
-        }
+        this.setState({
+            provinceReady: true,
+            ready: false,
+            selectedProvince: e.target.value,
+            selectedCountry: selectedCountry,
+            validationError: e.target.value === "" ? "You must select a Province" : "",
+            url: `api/LocationOccurrences?Country=${selectedCountry}&Province=${e.target.value}`
+        });
+
     }
 
 
     render() {
-        if (!(this.state.ready))
+        if (!(this.state.ready)) {
             this.GetCovidData();
+            this.GetCountryProvinceData();
+        }
+
         var graph = new CountryGraph(this.state.CovidData);
         return (
             <div>
@@ -60,7 +69,7 @@ export class Home extends Component {
                 <select value={this.state.selectedProvince} onChange={e => this.refreshGraphProvinces(e)}>
                     {this.state.provinces.map((c) => <option key={c.value} value={c.value}>{c.display}</option>)}
                 </select>
-                {this.state.selectedCountry && graph.render()}
+                {graph.render()}
             </div>
         );
     }
@@ -79,12 +88,12 @@ export class Home extends Component {
         if (data != null) {
             this.setState({ ProvinceData: data.sort() });
 
-            var prvoincesFromApi = data.map(c => {
+            var provincesFromApi = data.map(c => {
                 return { value: c.toLowerCase(), display: toTitleCase(c) }
             });
 
             this.setState({
-                provinces: [{ value: [], display: '(Select your Province)' }].concat(prvoincesFromApi)
+                provinces: [{ value: [], display: '(Select your Province)' }].concat(provincesFromApi)
             });
         }
         else {

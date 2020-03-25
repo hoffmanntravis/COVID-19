@@ -66,16 +66,15 @@ namespace COVID_19
                     DateTime dateToAttempt = firstDate.AddDays(i);
                     string targetDay = dateToAttempt.ToString("Mdyy");
 
-                    if (dict.TryGetValue(targetDay, out var count))
+                    if (dict.TryGetValue(targetDay, out var count) && !String.IsNullOrEmpty(count.ToString()))
                     {
-                        int intcount = int.Parse(count.ToString());
-                        if (type == "Confirmed")
-                            statusCount.Confirmed = intcount;
-                        else if (type == "Deaths")
-                            statusCount.Deaths = intcount;
-                        else if (type == "Recovered")
-                            statusCount.Recovered = intcount;
-
+                            int intcount = int.Parse(count.ToString());
+                            if (type == "Confirmed")
+                                statusCount.Confirmed = intcount;
+                            else if (type == "Deaths")
+                                statusCount.Deaths = intcount;
+                            else if (type == "Recovered")
+                                statusCount.Recovered = intcount;
 
                         Occurences occurences = new Occurences();
                         occurences.DateOccurrences.Add(dateToAttempt, statusCount);

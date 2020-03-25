@@ -1,8 +1,7 @@
-//import CanvasJSReact from '../canvasjs/canvasjs.react';
 import { Line } from 'react-chartjs-2';
 var React = require('react');
 var Component = React.Component;
-//var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+
 
 export class CountryGraph extends Component {
     constructor(covidData, props) {
