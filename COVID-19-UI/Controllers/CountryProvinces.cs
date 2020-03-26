@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -10,16 +11,26 @@ namespace COVID_19.Controllers
 {
     [ApiController]
     [Route("api/{controller}")]
-    public class CountryProvincesController : ControllerBase
-    {
 
-        //Country = country; Province = province;
-        //https://localhost:44353/api/country?Country=Mainland%20China&Province=Anhui
+    
+public class CountryProvincesController : ControllerBase
+    {
         public string Get([FromQuery] string Country)
         {
+
+
             try
             {
-                return JsonConvert.SerializeObject(CovidData.CountryProvinces[Country].Provinces.ToList(), Formatting.Indented);
+                if (CovidData.CountryProvinces.ContainsKey(Country))
+                {
+                    HashSet<string> theseCountries = CovidData.CountryProvinces[Country].Provinces.ToHashSet();
+                    if (Country == "us" || Country == "usa" || Country == "united states of america")
+                        theseCountries = theseCountries.Intersect(CovidData.USStates.Values).ToHashSet();
+
+                    return JsonConvert.SerializeObject(theseCountries.ToList(), Formatting.Indented);
+                }
+                else
+                    return JsonConvert.SerializeObject(null);
             }
             catch
             {

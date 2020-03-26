@@ -1,5 +1,7 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace COVID_19
@@ -25,7 +27,14 @@ namespace COVID_19
             set { LocationOccurrences = value.ToDictionary(x => x.Key, x => x.Value); }
         }
 
+        internal readonly static string USStatesJsonFile = "USStates.json";
 
+        internal static Dictionary<string, string> getStates(string filename)
+        {
+            string text = File.ReadAllText(USStatesJsonFile);
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(text);
+        }
+        public static Dictionary<string, string> USStates = getStates(USStatesJsonFile);
 
 
         public static void convertCsvToDictionary(List<dynamic> LocationList, string type)
@@ -68,13 +77,13 @@ namespace COVID_19
 
                     if (dict.TryGetValue(targetDay, out var count) && !String.IsNullOrEmpty(count.ToString()))
                     {
-                            int intcount = int.Parse(count.ToString());
-                            if (type == "Confirmed")
-                                statusCount.Confirmed = intcount;
-                            else if (type == "Deaths")
-                                statusCount.Deaths = intcount;
-                            else if (type == "Recovered")
-                                statusCount.Recovered = intcount;
+                        int intcount = int.Parse(count.ToString());
+                        if (type == "Confirmed")
+                            statusCount.Confirmed = intcount;
+                        else if (type == "Deaths")
+                            statusCount.Deaths = intcount;
+                        else if (type == "Recovered")
+                            statusCount.Recovered = intcount;
 
                         Occurences occurences = new Occurences();
                         occurences.DateOccurrences.Add(dateToAttempt, statusCount);

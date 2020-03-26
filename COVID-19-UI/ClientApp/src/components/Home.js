@@ -22,8 +22,7 @@ export class Home extends Component {
         this.setState({
             provinceUrl: `api/CountryProvinces?Country=${e.target.value}`, provinceReady: false, provinces: [],
             ready: false,
-            selectedCountry: e.target.value,
-            validationError: e.target.value === "" ? "You must select a Country" : ""
+            selectedCountry: e.target.value
         });
 
         if (this.state.provinces.includes(this.state.selectedProvince)) {
@@ -47,7 +46,6 @@ export class Home extends Component {
             ready: false,
             selectedProvince: e.target.value,
             selectedCountry: selectedCountry,
-            validationError: e.target.value === "" ? "You must select a Province" : "",
             url: `api/LocationOccurrences?Country=${selectedCountry}&Province=${e.target.value}`
         });
 
@@ -75,29 +73,32 @@ export class Home extends Component {
     }
 
     async GetCovidData() {
-        //https://localhost:44353/api/country?Country=Mainland%20China&Province=Anhui
-        const response = await fetch(encodeURI(this.state.url));
-        const data = await response.json();
-        this.setState({ CovidData: data, ready: true });
+        if (this.state.url) {
+            const response = await fetch(encodeURI(this.state.url));
+            const data = await response.json();
+            this.setState({ CovidData: data, ready: true });
+        }
     }
 
     async GetCountryProvinceData() {
         ///api/CountryProvinces?Country=Us
-        const response = await fetch(encodeURI(this.state.provinceUrl));
-        var data = await response.json();
-        if (data != null) {
-            this.setState({ ProvinceData: data.sort() });
+        if (this.state.provinceUrl) {
+            const response = await fetch(encodeURI(this.state.provinceUrl));
+            var data = await response.json();
+            if (data != null) {
+                this.setState({ ProvinceData: data.sort() });
 
-            var provincesFromApi = data.map(c => {
-                return { value: c.toLowerCase(), display: toTitleCase(c) }
-            });
+                var provincesFromApi = data.map(c => {
+                    return { value: c.toLowerCase(), display: toTitleCase(c) }
+                });
 
-            this.setState({
-                provinces: [{ value: [], display: '(Select your Province)' }].concat(provincesFromApi)
-            });
-        }
-        else {
-            this.setState({ selectedProvince: "", provinces: [] });
+                this.setState({
+                    provinces: [{ value: [], display: '(Select your Province)' }].concat(provincesFromApi)
+                });
+            }
+            else {
+                this.setState({ selectedProvince: "", provinces: [] });
+            }
         }
     }
 
@@ -125,9 +126,13 @@ export class Home extends Component {
 
 
 var toTitleCase = function (str) {
+    if (str === "us")
+        return "US";
     str = str.toLowerCase().split(' ');
     for (var i = 0; i < str.length; i++) {
         str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
     }
+
+
     return str.join(' ');
 };
