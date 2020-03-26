@@ -36,11 +36,11 @@ namespace COVID_19
 
                 //CSVCovidData.LocationCsvList.Add(csv.GetRecords<LocationCsv>().ToList());
 
-                if (filename.Contains("time_series_19-covid-Confirmed"))
+                if (filename.Contains("time_series_covid19_confirmed_global"))
                     CSVCovidData.RawDataConfirmed = csv.GetRecords<dynamic>().ToList();
-                else if (filename.Contains("time_series_19-covid-Deaths"))
+                else if (filename.Contains("time_series_covid19_deaths_global"))
                     CSVCovidData.RawDataDeaths = csv.GetRecords<dynamic>().ToList();
-                else if (filename.Contains("time_series_19-covid-Recovered"))
+                else if (filename.Contains("time_series_covid19_recovered_global"))
                     CSVCovidData.RawDataRecovered = csv.GetRecords<dynamic>().ToList();
             }
         }
